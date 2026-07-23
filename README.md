@@ -76,6 +76,8 @@ Firebase Firestore
 - offerLetterScans
 - recruiterVerifications
 
+© 2026 JobShield AI
+
 ---
 
 ## 👨‍💻 Developed By
