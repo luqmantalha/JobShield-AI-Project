@@ -10,11 +10,13 @@ import {
   UserCircle,
   LogOut,
   History,
+  BadgeCheck,
 } from "lucide-react";
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebase";
+import toast from "react-hot-toast";
 
 type Props = {
   children: ReactNode;
@@ -43,6 +45,11 @@ function DashboardLayout({ children }: Props) {
       icon: FileCheck,
     },
     {
+      name: "Recruiter Check",
+      path: "/recruiter-verification",
+      icon: BadgeCheck,
+    },
+    {
       name: "Reports",
       path: "/reports",
       icon: BarChart3,
@@ -59,167 +66,130 @@ function DashboardLayout({ children }: Props) {
     },
   ];
 
-  const pageTitle =
+  const currentPage =
     menu.find((item) => item.path === location.pathname)?.name ||
     "Dashboard";
 
   const logout = async () => {
     try {
       await signOut(auth);
-      alert("Logged out successfully!");
+      toast.success("Logged out successfully!");
       navigate("/login");
     } catch (error) {
       console.error(error);
-      alert("Logout failed.");
+      toast.error("Logout failed.");
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-[#050816] text-white">
+    <div className="flex min-h-screen bg-[#050c1a] text-white">
 
       {/* Sidebar */}
-
-      <aside className="w-72 bg-[#111827] border-r border-gray-800 flex flex-col">
+      <aside className="w-64 bg-[#080f1e] border-r border-gray-800/60 flex flex-col shrink-0">
 
         {/* Logo */}
-
-        <div className="px-8 py-8 border-b border-gray-800">
-
+        <div className="px-6 py-6 border-b border-gray-800/60">
           <div className="flex items-center gap-3">
-
-            <div className="w-12 h-12 rounded-xl bg-violet-600 flex items-center justify-center">
-              <ShieldCheck size={26} />
+            <div className="w-10 h-10 rounded-xl bg-violet-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
+              <ShieldCheck size={22} />
             </div>
-
             <div>
-
-              <h2 className="text-2xl font-bold">
-                JobShield
-                <span className="text-violet-400"> AI</span>
+              <h2 className="text-lg font-bold leading-tight">
+                JobShield<span className="text-violet-400"> AI</span>
               </h2>
-
-              <p className="text-sm text-gray-500">
-                Secure Hiring Platform
-              </p>
-
+              <p className="text-xs text-gray-500">Secure Hiring Platform</p>
             </div>
-
           </div>
-
         </div>
 
         {/* Navigation */}
-
-        <nav className="flex-1 px-6 py-8 space-y-3">
-
+        <nav className="flex-1 px-3 py-5 space-y-1">
           {menu.map((item) => {
             const Icon = item.icon;
+            const isActive = location.pathname === item.path;
 
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-4 rounded-xl px-5 py-4 transition-all duration-300 ${
-                  location.pathname === item.path
-                    ? "bg-violet-600 text-white font-semibold shadow-lg"
-                    : "text-gray-300 hover:bg-[#1f2937] hover:text-violet-400"
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ${
+                  isActive
+                    ? "bg-violet-600 text-white font-semibold shadow-md shadow-violet-500/20"
+                    : "text-gray-400 hover:bg-white/5 hover:text-white"
                 }`}
               >
-                <Icon size={22} />
+                <Icon size={18} />
                 <span>{item.name}</span>
+                {isActive && (
+                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white/60" />
+                )}
               </Link>
             );
           })}
-
         </nav>
 
-        {/* User */}
-
-        <div className="border-t border-gray-800 p-6">
-
-          <div className="flex items-center gap-4">
-
-            <UserCircle
-              size={48}
-              className="text-violet-400"
-            />
-
-            <div className="overflow-hidden">
-
-              <h4 className="font-semibold truncate">
+        {/* User Panel */}
+        <div className="border-t border-gray-800/60 p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-9 h-9 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
+              <UserCircle size={20} className="text-violet-400" />
+            </div>
+            <div className="overflow-hidden flex-1">
+              <p className="text-sm font-semibold truncate text-white">
                 {user?.email?.split("@")[0] || "Guest User"}
-              </h4>
-
-              <p className="text-sm text-gray-500 truncate">
+              </p>
+              <p className="text-xs text-gray-500 truncate">
                 {user?.email || "No Email"}
               </p>
-
             </div>
-
           </div>
 
           <button
             onClick={logout}
-            className="mt-6 w-full flex items-center justify-center gap-2 rounded-xl bg-red-600 py-3 font-semibold hover:bg-red-700 transition-all duration-300"
+            className="w-full flex items-center justify-center gap-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 text-red-400 py-2.5 text-sm font-semibold transition-all duration-200"
           >
-            <LogOut size={18} />
-            Logout
+            <LogOut size={16} />
+            Sign Out
           </button>
-
         </div>
 
       </aside>
 
-      {/* Main */}
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0">
 
-      <div className="flex-1 flex flex-col">
-
-        {/* Header */}
-
-        <header className="h-20 border-b border-gray-800 bg-[#08101f] flex items-center justify-between px-10">
-
+        {/* Top Header */}
+        <header className="h-16 border-b border-gray-800/60 bg-[#080f1e]/80 backdrop-blur flex items-center justify-between px-8 shrink-0">
           <div>
-
-            <h1 className="text-3xl font-bold">
-              {pageTitle}
-            </h1>
-
-            <p className="text-gray-400 mt-1">
-              Welcome back 👋
+            <h1 className="text-xl font-bold text-white">{currentPage}</h1>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
             </p>
-
           </div>
 
-          <div className="flex items-center gap-6">
-
-            <button className="relative">
-
-              <Bell
-                size={24}
-                className="text-gray-400 hover:text-violet-400 transition"
-              />
-
-              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-red-500"></span>
-
+          <div className="flex items-center gap-4">
+            <button className="relative p-2 rounded-xl bg-white/5 hover:bg-white/10 transition">
+              <Bell size={18} className="text-gray-400" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500" />
             </button>
 
-            <UserCircle
-              size={42}
-              className="text-violet-400"
-            />
-
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5">
+              <div className="w-7 h-7 rounded-full bg-violet-600/30 flex items-center justify-center">
+                <UserCircle size={16} className="text-violet-400" />
+              </div>
+              <span className="text-sm text-gray-300 font-medium">
+                {user?.email?.split("@")[0] || "User"}
+              </span>
+            </div>
           </div>
-
         </header>
 
         {/* Page Content */}
-
-        <main className="flex-1 overflow-auto p-10">
+        <main className="flex-1 overflow-auto p-8">
           {children}
         </main>
 
       </div>
-
     </div>
   );
 }

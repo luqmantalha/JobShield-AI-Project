@@ -12,8 +12,6 @@ import RecruiterVerification from "../pages/RecruiterVerification";
 import Reports from "../pages/Reports";
 import Settings from "../pages/Settings";
 import NotFound from "../pages/NotFound";
-import TestAI from "../pages/TestAI";
-import TestModels from "../pages/TestModels";
 
 import DashboardLayout from "../layouts/DashboardLayout";
 
@@ -27,10 +25,6 @@ function AppRoutes() {
       {/* Authentication */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-
-      {/* Testing */}
-      <Route path="/test-ai" element={<TestAI />} />
-      <Route path="/test-models" element={<TestModels />} />
 
       {/* Dashboard */}
       <Route
